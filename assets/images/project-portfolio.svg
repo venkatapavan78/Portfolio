@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="100%" stop-color="#141c2e"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="340" fill="url(#bgGrad)"/>
+
+  <!-- Browser Header Window -->
+  <rect width="600" height="36" fill="#0b1120"/>
+  <circle cx="20" cy="18" r="5" fill="#ef4444"/>
+  <circle cx="36" cy="18" r="5" fill="#f59e0b"/>
+  <circle cx="52" cy="18" r="5" fill="#10b981"/>
+  
+  <!-- Address Bar -->
+  <rect x="75" y="8" width="450" height="20" rx="10" fill="#1e293b"/>
+  <text x="230" y="22" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11" text-anchor="middle">https://venkatapavan.dev/portfolio</text>
+
+  <!-- Navigation Mockup -->
+  <rect x="30" y="52" width="60" height="12" rx="4" fill="url(#accentGrad)"/>
+  <rect x="420" y="54" width="30" height="8" rx="2" fill="#475569"/>
+  <rect x="460" y="54" width="30" height="8" rx="2" fill="#475569"/>
+  <rect x="500" y="54" width="30" height="8" rx="2" fill="#475569"/>
+  <rect x="540" y="50" width="30" height="16" rx="8" fill="url(#accentGrad)"/>
+
+  <!-- Hero Content Left -->
+  <rect x="30" y="90" width="80" height="14" rx="7" fill="#1e293b"/>
+  <text x="38" y="100" fill="#06b6d4" font-family="monospace" font-size="8">FULL STACK</text>
+  
+  <text x="30" y="140" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="bold">Personal Portfolio</text>
+  <text x="30" y="165" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="16" font-weight="600">Modern Digital Showcase</text>
+  
+  <!-- Description Lines -->
+  <rect x="30" y="185" width="260" height="6" rx="3" fill="#334155"/>
+  <rect x="30" y="198" width="220" height="6" rx="3" fill="#334155"/>
+  <rect x="30" y="211" width="180" height="6" rx="3" fill="#334155"/>
+
+  <!-- Buttons -->
+  <rect x="30" y="235" width="90" height="26" rx="6" fill="url(#accentGrad)"/>
+  <text x="75" y="251" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="10" font-weight="bold" text-anchor="middle">View Work</text>
+  
+  <rect x="130" y="235" width="80" height="26" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="170" y="251" fill="#94a3b8" font-family="-apple-system, sans-serif" font-size="10" text-anchor="middle">Contact</text>
+
+  <!-- Right Side Visual / Avatar Frame -->
+  <circle cx="440" cy="180" r="75" fill="none" stroke="url(#accentGrad)" stroke-width="3" stroke-dasharray="4 4"/>
+  <circle cx="440" cy="180" r="65" fill="#0f172a"/>
+  
+  <!-- User Silhouette in Avatar -->
+  <circle cx="440" cy="165" r="22" fill="#38bdf8" opacity="0.8"/>
+  <path d="M 405 215 C 405 195, 475 195, 475 215 Z" fill="#38bdf8" opacity="0.8"/>
+
+  <!-- Floating Badges -->
+  <rect x="350" y="120" width="70" height="22" rx="11" fill="#0b1329" stroke="#06b6d4" stroke-width="1"/>
+  <text x="385" y="134" fill="#06b6d4" font-family="monospace" font-size="8" text-anchor="middle">⚡ HTML5/CSS3</text>
+
+  <rect x="460" y="220" width="70" height="22" rx="11" fill="#0b1329" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="495" y="234" fill="#a78bfa" font-family="monospace" font-size="8" text-anchor="middle">★ Vanilla JS</text>
+
+  <!-- Bottom Showcase Strip -->
+  <rect x="30" y="285" width="540" height="35" rx="8" fill="url(#cardGrad)" stroke="#1e293b" stroke-width="1"/>
+  <text x="50" y="306" fill="#94a3b8" font-family="-apple-system, sans-serif" font-size="10">Projects Preview</text>
+  <text x="200" y="306" fill="#06b6d4" font-family="-apple-system, sans-serif" font-size="10">• Skills Matrix</text>
+  <text x="330" y="306" fill="#a78bfa" font-family="-apple-system, sans-serif" font-size="10">• Dark/Light Mode</text>
+  <text x="480" y="306" fill="#10b981" font-family="-apple-system, sans-serif" font-size="10">• 100% Native</text>
+</svg>

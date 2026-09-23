@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | Venkata Pavan Portfolio</title>
+  
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <div class="dashboard-wrapper">
+    <header class="site-header scrolled">
+      <div class="container navbar">
+        <a href="../index.html" class="brand">
+          <span class="brand-monogram">VP</span>
+          <span class="brand-text">
+            <span class="brand-name">Venkata Pavan</span>
+            <span class="brand-title">User Hub</span>
+          </span>
+        </a>
+        <div class="nav-actions">
+          <button type="button" class="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+          <a href="../index.html" class="btn btn-outline btn-sm">Return Home</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container dashboard-main">
+      <div class="dashboard-card">
+        <span class="section-tag">// Role: USER Architecture</span>
+        <h1 class="section-title dashboard-title">User Workspace Hub</h1>
+        <p class="section-subtitle dashboard-desc">
+          Client portal workspace reserved for future modules. Registered users will manage collaboration inquiries, track project milestones, and access personalized client views.
+        </p>
+
+        <!-- 3-Panel Architecture Matrix (Section 19: Future Workflow) -->
+        <div class="dashboard-grid">
+          <!-- 1. Profile Panel -->
+          <div class="dashboard-panel-card">
+            <div class="dashboard-panel-header">
+              <span class="dashboard-panel-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Client Profile
+              </span>
+              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+            </div>
+            <p class="dashboard-panel-desc">
+              Manage personal credentials, contact email, and session preferences stored in <code>portfolio_users</code> and <code>portfolio_session</code>.
+            </p>
+            <div class="dashboard-panel-meta">Role: USER</div>
+          </div>
+
+          <!-- 2. Bookmarked Projects Panel -->
+          <div class="dashboard-panel-card">
+            <div class="dashboard-panel-header">
+              <span class="dashboard-panel-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Saved Projects
+              </span>
+              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+            </div>
+            <p class="dashboard-panel-desc">
+              Bookmark featured portfolio applications, view architectural specifications, and download case studies.
+            </p>
+            <div class="dashboard-panel-meta">Source: portfolio_projects</div>
+          </div>
+
+          <!-- 3. Collaboration Inquiries Panel -->
+          <div class="dashboard-panel-card">
+            <div class="dashboard-panel-header">
+              <span class="dashboard-panel-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                My Inquiries
+              </span>
+              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+            </div>
+            <p class="dashboard-panel-desc">
+              Track project inquiries submitted through the contact form, response status, and communications history.
+            </p>
+            <div class="dashboard-panel-meta">Source: portfolio_messages</div>
+          </div>
+        </div>
+
+        <a href="../index.html" class="btn btn-primary">Return to Home Page</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>
