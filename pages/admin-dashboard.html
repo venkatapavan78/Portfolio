@@ -4,111 +4,649 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Venkata Pavan Portfolio</title>
-  
+  <meta name="description" content="Admin Dashboard for managing Projects, Skills, and Blog articles with Local Storage persistence.">
+
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>VP</text></svg>">
+
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <link rel="stylesheet" href="../css/auth.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+
+  <!-- Core Scripts for Immediate Authentication Guard (Module 3 & 4 - Section 6) -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Synchronous role guard execution before DOM rendering
+    if (window.PortfolioAuth) {
+      window.PortfolioAuth.requireRole("admin", "user-dashboard.html", "login.html");
+    }
+  </script>
 </head>
 <body>
   <div class="ambient-glow" aria-hidden="true"></div>
 
-  <div class="dashboard-wrapper">
-    <header class="site-header scrolled">
-      <div class="container navbar">
-        <a href="../index.html" class="brand">
-          <span class="brand-monogram">VP</span>
+  <div class="admin-layout">
+    <!-- ========================================================================
+         1. Admin Sidebar (Section 3)
+         ======================================================================== -->
+    <aside class="admin-sidebar" role="navigation" aria-label="Admin Navigation">
+      <div class="admin-sidebar-header">
+        <a href="../index.html" class="admin-sidebar-brand" aria-label="Portfolio Homepage">
+          <span class="brand-monogram" style="background: linear-gradient(135deg, var(--accent-amber), var(--accent-rose)); width:36px; height:36px; font-size:16px;">VP</span>
           <span class="brand-text">
-            <span class="brand-name">Venkata Pavan</span>
-            <span class="brand-title">Admin Console</span>
+            <span class="brand-name" style="font-size:0.95rem;">Admin Console</span>
+            <span class="brand-title" style="font-size:0.7rem;">Venkata Pavan</span>
           </span>
         </a>
-        <div class="nav-actions">
+        <button type="button" class="admin-modal-close" id="admin-sidebar-close-btn" aria-label="Close menu" style="display:none;">&times;</button>
+      </div>
+
+      <nav class="admin-sidebar-nav">
+        <!-- Dashboard Link -->
+        <a href="#dashboard" class="admin-nav-item active" data-section="dashboard">
+          <div class="admin-nav-item-content">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Dashboard</span>
+          </div>
+        </a>
+
+        <!-- Projects Link -->
+        <a href="#projects" class="admin-nav-item" data-section="projects">
+          <div class="admin-nav-item-content">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Projects</span>
+          </div>
+          <span class="admin-nav-badge" id="nav-badge-projects">0</span>
+        </a>
+
+        <!-- Skills Link -->
+        <a href="#skills" class="admin-nav-item" data-section="skills">
+          <div class="admin-nav-item-content">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span>Skills</span>
+          </div>
+          <span class="admin-nav-badge" id="nav-badge-skills">0</span>
+        </a>
+
+        <!-- Blogs Link -->
+        <a href="#blogs" class="admin-nav-item" data-section="blogs">
+          <div class="admin-nav-item-content">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>Blogs</span>
+          </div>
+          <span class="admin-nav-badge" id="nav-badge-blogs">0</span>
+        </a>
+
+        <!-- Messages Link (Reserved Module 5) -->
+        <a href="#messages" class="admin-nav-item" data-section="messages">
+          <div class="admin-nav-item-content">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Messages</span>
+          </div>
+          <span class="admin-nav-badge badge-reserved">Module 5</span>
+        </a>
+
+        <div style="height: 1px; background: var(--border-subtle); margin: var(--spacing-3) 0;"></div>
+
+        <!-- Link back to Public Portfolio -->
+        <a href="../index.html" class="admin-nav-item" target="_blank" rel="noopener">
+          <div class="admin-nav-item-content">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Public Portfolio</span>
+          </div>
+        </a>
+
+        <!-- Logout Link -->
+        <button type="button" class="admin-nav-item btn-logout" data-redirect="../index.html" style="background:transparent; border:none; width:100%; text-align:left;">
+          <div class="admin-nav-item-content" style="color: var(--accent-rose);">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Logout</span>
+          </div>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer User Profile -->
+      <div class="admin-sidebar-footer">
+        <div class="admin-user-profile-badge">
+          <div class="admin-user-profile-avatar admin-avatar-initials">AD</div>
+          <div class="admin-user-profile-meta">
+            <div class="admin-user-profile-name" id="admin-chip-name">Administrator</div>
+            <div class="admin-user-profile-role" id="admin-chip-role">ROLE: ADMIN</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================================================
+         2. Main Workspace Layout
+         ======================================================================== -->
+    <main class="admin-main">
+      <!-- Top Header Navigation Bar (Section 4) -->
+      <header class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button type="button" class="admin-mobile-toggle" id="admin-mobile-toggle-btn" aria-label="Toggle Navigation Sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="admin-breadcrumb">
+            <span>Admin Console</span>
+            <span>/</span>
+            <span class="admin-breadcrumb-active" id="admin-breadcrumb-current">Dashboard Overview</span>
+          </div>
+        </div>
+
+        <div class="admin-topbar-actions">
+          <span class="auth-role-tag role-admin" style="font-size:0.75rem;">ADMIN AUTHENTICATED</span>
+
+          <!-- Dark / Light Theme Toggle -->
           <button type="button" class="theme-toggle" aria-label="Toggle theme">
             <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
           </button>
-          <a href="../index.html" class="btn btn-outline btn-sm">Return Home</a>
+
+          <!-- Topbar Logout Button -->
+          <button type="button" class="btn btn-outline btn-sm btn-logout" data-redirect="../index.html">
+            Logout
+          </button>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <main class="container dashboard-main">
-      <div class="dashboard-card">
-        <span class="section-tag">// Role: ADMIN Architecture</span>
-        <h1 class="section-title dashboard-title">Admin Management Console</h1>
-        <p class="section-subtitle dashboard-desc">
-          Architectural workspace reserved for future modules. When activated, administrators will execute full CRUD operations against Local Storage to sync data directly to the public portfolio.
-        </p>
+      <!-- Main Dynamic Content Workspace -->
+      <div class="admin-content">
 
-        <!-- 4-Panel Architecture Matrix (Section 19: Future Workflow) -->
-        <div class="dashboard-grid">
-          <!-- 1. Projects Management Panel -->
-          <div class="dashboard-panel-card" id="admin-projects-panel">
-            <div class="dashboard-panel-header">
-              <span class="dashboard-panel-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                Projects Manager
-              </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+        <!-- ====================================================================
+             SECTION A: DASHBOARD HOME (#dashboardSection)
+             ==================================================================== -->
+        <section class="admin-section active" id="dashboardSection">
+          <div class="admin-section-header">
+            <div class="admin-section-title-wrap">
+              <h2 id="admin-header-greeting">Welcome back, Administrator</h2>
+              <p class="admin-section-subtitle">Real-time telemetry and content statistics stored natively in browser Local Storage.</p>
             </div>
-            <p class="dashboard-panel-desc">
-              Create, read, update, and delete featured project cards. Persists directly to <code>portfolio_projects</code> in Local Storage.
-            </p>
-            <div class="dashboard-panel-meta">Key: portfolio_projects (CRUD)</div>
+            <div class="admin-quick-actions">
+              <button type="button" class="btn btn-primary btn-sm" data-navigate="projects">+ New Project</button>
+              <button type="button" class="btn btn-outline btn-sm" data-navigate="skills">+ New Skill</button>
+              <button type="button" class="btn btn-outline btn-sm" data-navigate="blogs">+ New Blog</button>
+            </div>
           </div>
 
-          <!-- 2. Skills Management Panel -->
-          <div class="dashboard-panel-card" id="admin-skills-panel">
-            <div class="dashboard-panel-header">
-              <span class="dashboard-panel-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                Skills Manager
-              </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+          <!-- Dynamic Statistics Grid (Section 5, 41) -->
+          <div class="admin-stats-grid">
+            <!-- 1. Total Projects Card -->
+            <div class="stat-card" data-navigate="projects" title="Click to view and manage Projects">
+              <div class="stat-card-info">
+                <span class="stat-card-title">Total Projects</span>
+                <span class="stat-card-value" id="stat-total-projects">0</span>
+                <span class="stat-card-badge">portfolio_projects</span>
+              </div>
+              <div class="stat-card-icon icon-projects">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </div>
             </div>
-            <p class="dashboard-panel-desc">
-              Adjust technical proficiencies, progress bar metrics, and category tags. Persists to <code>portfolio_skills</code> in Local Storage.
-            </p>
-            <div class="dashboard-panel-meta">Key: portfolio_skills (CRUD)</div>
+
+            <!-- 2. Total Skills Card -->
+            <div class="stat-card" data-navigate="skills" title="Click to view and manage Skills">
+              <div class="stat-card-info">
+                <span class="stat-card-title">Total Skills</span>
+                <span class="stat-card-value" id="stat-total-skills">0</span>
+                <span class="stat-card-badge">portfolio_skills</span>
+              </div>
+              <div class="stat-card-icon icon-skills">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              </div>
+            </div>
+
+            <!-- 3. Total Blogs Card -->
+            <div class="stat-card" data-navigate="blogs" title="Click to view and manage Blogs">
+              <div class="stat-card-info">
+                <span class="stat-card-title">Total Blogs</span>
+                <span class="stat-card-value" id="stat-total-blogs">0</span>
+                <span class="stat-card-badge">portfolio_blogs</span>
+              </div>
+              <div class="stat-card-icon icon-blogs">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
+            </div>
+
+            <!-- 4. System Storage Telemetry Card -->
+            <div class="stat-card">
+              <div class="stat-card-info">
+                <span class="stat-card-title">Local Storage</span>
+                <span class="stat-card-value" style="font-size: 1.5rem; color: var(--accent-emerald);">ONLINE</span>
+                <span class="stat-card-badge" style="color:var(--text-muted);">Independent Keys: 5</span>
+              </div>
+              <div class="stat-card-icon icon-system">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+            </div>
           </div>
 
-          <!-- 3. Blogs Management Panel -->
-          <div class="dashboard-panel-card" id="admin-blogs-panel">
+          <!-- Architecture & Next Module Information Panel -->
+          <div class="dashboard-panel-card" style="margin-top: var(--spacing-6);">
             <div class="dashboard-panel-header">
               <span class="dashboard-panel-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                Blog Articles Manager
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Module 4 Content Management Active
               </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+              <span class="dashboard-panel-badge">Full CRUD Operational</span>
             </div>
             <p class="dashboard-panel-desc">
-              Author and publish markdown articles, category tags, and reading times. Persists to <code>portfolio_blogs</code> in Local Storage.
+              All modifications executed through this console persist directly to browser Local Storage keys: <code>portfolio_projects</code>, <code>portfolio_skills</code>, and <code>portfolio_blogs</code>.
+              In future <strong>Module 5</strong>, the public Home Page will automatically synchronize and hydrate its showcase cards from these stored entities.
             </p>
-            <div class="dashboard-panel-meta">Key: portfolio_blogs (CRUD)</div>
           </div>
+        </section>
 
-          <!-- 4. Messages Inbox Panel (Admin -> Messages) -->
-          <div class="dashboard-panel-card" id="admin-messages-panel">
-            <div class="dashboard-panel-header">
-              <span class="dashboard-panel-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                Messages Inbox (Admin &rarr; Messages)
-              </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+        <!-- ====================================================================
+             SECTION B: PROJECTS MANAGEMENT (#projectsSection)
+             ==================================================================== -->
+        <section class="admin-section" id="projectsSection">
+          <div class="admin-section-header">
+            <div class="admin-section-title-wrap">
+              <h2>Projects Management</h2>
+              <p class="admin-section-subtitle">Create, preview, edit, and delete featured portfolio applications.</p>
             </div>
-            <p class="dashboard-panel-desc">
-              Review, mark as read, and manage client inquiries submitted through the public Contact form. Stored in <code>portfolio_messages</code>.
-            </p>
-            <div class="dashboard-panel-meta">Key: portfolio_messages (Read/Delete)</div>
+            <button type="button" class="btn btn-primary" id="btn-add-project">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Add Project</span>
+            </button>
           </div>
-        </div>
 
-        <a href="../index.html" class="btn btn-primary">Return to Home Page</a>
+          <!-- Search & Filter Bar (Section 33) -->
+          <div class="admin-filter-bar">
+            <div class="admin-search-wrapper">
+              <svg class="admin-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="projects-search-input" class="admin-search-input" placeholder="Search projects by title or technology...">
+              <button type="button" id="projects-search-clear" class="admin-search-clear" aria-label="Clear search">&times;</button>
+            </div>
+            <div class="admin-count-indicator" id="projects-count-indicator">Showing 0 projects</div>
+          </div>
+
+          <!-- Projects Table (Section 11) -->
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">Thumbnail</th>
+                  <th>Project Details</th>
+                  <th>Technologies</th>
+                  <th style="width: 120px;">Created</th>
+                  <th style="width: 150px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="projects-table-body">
+                <!-- Dynamically rendered by admin.js -->
+              </tbody>
+            </table>
+
+            <!-- Empty State (Section 38) -->
+            <div class="admin-empty-state" id="projects-empty-state" style="display:none;">
+              <div class="admin-empty-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </div>
+              <div class="admin-empty-title">No projects found</div>
+              <div class="admin-empty-desc">Create your first featured portfolio application or clear the search filter.</div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('btn-add-project').click()">Add Project</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             SECTION C: SKILLS MANAGEMENT (#skillsSection)
+             ==================================================================== -->
+        <section class="admin-section" id="skillsSection">
+          <div class="admin-section-header">
+            <div class="admin-section-title-wrap">
+              <h2>Skills Management</h2>
+              <p class="admin-section-subtitle">Manage technical proficiencies, categories, and proficiency percentage metrics.</p>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-add-skill">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Add Skill</span>
+            </button>
+          </div>
+
+          <!-- Search & Filter Bar (Section 33) -->
+          <div class="admin-filter-bar">
+            <div class="admin-search-wrapper">
+              <svg class="admin-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="skills-search-input" class="admin-search-input" placeholder="Search skills by name or category...">
+              <button type="button" id="skills-search-clear" class="admin-search-clear" aria-label="Clear search">&times;</button>
+            </div>
+            <div class="admin-count-indicator" id="skills-count-indicator">Showing 0 skills</div>
+          </div>
+
+          <!-- Skills Table (Section 18) -->
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Skill Name</th>
+                  <th>Category</th>
+                  <th style="width: 220px;">Proficiency Level</th>
+                  <th style="width: 120px;">Created</th>
+                  <th style="width: 150px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="skills-table-body">
+                <!-- Dynamically rendered by admin.js -->
+              </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div class="admin-empty-state" id="skills-empty-state" style="display:none;">
+              <div class="admin-empty-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              </div>
+              <div class="admin-empty-title">No skills found</div>
+              <div class="admin-empty-desc">Add technical competencies or clear the search query.</div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('btn-add-skill').click()">Add Skill</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             SECTION D: BLOGS MANAGEMENT (#blogsSection)
+             ==================================================================== -->
+        <section class="admin-section" id="blogsSection">
+          <div class="admin-section-header">
+            <div class="admin-section-title-wrap">
+              <h2>Blog Articles Management</h2>
+              <p class="admin-section-subtitle">Author, edit, preview, and publish technical markdown articles and case studies.</p>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-add-blog">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Add Blog</span>
+            </button>
+          </div>
+
+          <!-- Search & Filter Bar (Section 33) -->
+          <div class="admin-filter-bar">
+            <div class="admin-search-wrapper">
+              <svg class="admin-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="blogs-search-input" class="admin-search-input" placeholder="Search blogs by title or category...">
+              <button type="button" id="blogs-search-clear" class="admin-search-clear" aria-label="Clear search">&times;</button>
+            </div>
+            <div class="admin-count-indicator" id="blogs-count-indicator">Showing 0 articles</div>
+          </div>
+
+          <!-- Blogs Table (Section 25) -->
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">Thumbnail</th>
+                  <th>Article Details</th>
+                  <th>Category</th>
+                  <th style="width: 120px;">Status</th>
+                  <th style="width: 120px;">Created</th>
+                  <th style="width: 150px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="blogs-table-body">
+                <!-- Dynamically rendered by admin.js -->
+              </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div class="admin-empty-state" id="blogs-empty-state" style="display:none;">
+              <div class="admin-empty-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
+              <div class="admin-empty-title">No blog articles found</div>
+              <div class="admin-empty-desc">Create your first technical article or clear the current search filter.</div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('btn-add-blog').click()">Add Blog</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             SECTION E: MESSAGES INBOX (#messagesSection) (Reserved for Module 5)
+             ==================================================================== -->
+        <section class="admin-section" id="messagesSection">
+          <div class="admin-section-header">
+            <div class="admin-section-title-wrap">
+              <h2>Contact Messages Inbox</h2>
+              <p class="admin-section-subtitle">Client inquiries and collaboration proposals submitted from the public contact form.</p>
+            </div>
+            <span class="dashboard-panel-badge badge-amber" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">Module 5 Reserved Feature</span>
+          </div>
+
+          <div class="dashboard-card" style="margin-top: var(--spacing-8);">
+            <div class="admin-empty-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent-amber); margin: 0 auto var(--spacing-4);">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </div>
+            <h3 class="admin-empty-title">Messages Inbox Placeholder</h3>
+            <p class="admin-empty-desc" style="max-width: 520px; margin: 0 auto var(--spacing-6);">
+              In <strong>Module 5</strong>, public inquiries submitted through the contact form on <code>index.html</code> will be parsed and synchronized into <code>portfolio_messages</code> in Local Storage for review, status tracking, and deletion here.
+            </p>
+            <button type="button" class="btn btn-outline btn-sm" data-navigate="dashboard">Return to Dashboard Overview</button>
+          </div>
+        </section>
+
       </div>
     </main>
   </div>
 
-  <script src="../js/storage.js"></script>
-  <script src="../js/auth.js"></script>
+  <!-- ========================================================================
+       3. Modals System (Section 35)
+       ======================================================================== -->
+
+  <!-- Modal 1: Project Add / Edit Modal -->
+  <div class="admin-modal-backdrop" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title" id="project-modal-title">Add New Project</h3>
+        <button type="button" class="admin-modal-close" data-close-modal="project-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="project-modal-form" novalidate>
+        <div class="admin-modal-body">
+          <!-- Project Title -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="project-title-input">
+              <span>Project Title <span class="required-star">*</span></span>
+            </label>
+            <input type="text" id="project-title-input" class="modal-input" placeholder="e.g. Distributed Task Scheduler" required>
+            <span class="modal-field-error" id="project-title-input-error"></span>
+          </div>
+
+          <!-- Description -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="project-desc-input">
+              <span>Description <span class="required-star">*</span></span>
+            </label>
+            <textarea id="project-desc-input" class="modal-textarea" placeholder="Brief summary of the engineering architecture and capabilities..." required></textarea>
+            <span class="modal-field-error" id="project-desc-input-error"></span>
+          </div>
+
+          <!-- Technologies -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="project-tech-input">
+              <span>Technologies (Comma-separated) <span class="required-star">*</span></span>
+            </label>
+            <input type="text" id="project-tech-input" class="modal-input" placeholder="e.g. HTML5, CSS3, JavaScript, Local Storage" required>
+            <span class="modal-field-error" id="project-tech-input-error"></span>
+          </div>
+
+          <!-- Image URL -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="project-image-input">
+              <span>Image Path / URL (Optional)</span>
+            </label>
+            <input type="text" id="project-image-input" class="modal-input" placeholder="assets/images/project-placeholder.jpg">
+          </div>
+
+          <!-- Project URL & GitHub URL (Side by side) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-3);">
+            <div class="modal-form-group">
+              <label class="modal-label" for="project-live-input">
+                <span>Live Demo URL (Optional)</span>
+              </label>
+              <input type="url" id="project-live-input" class="modal-input" placeholder="https://example.com/demo">
+            </div>
+            <div class="modal-form-group">
+              <label class="modal-label" for="project-github-input">
+                <span>GitHub Repository URL (Optional)</span>
+              </label>
+              <input type="url" id="project-github-input" class="modal-input" placeholder="https://github.com/example/repo">
+            </div>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" data-close-modal="project-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btn-save-project">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Skill Add / Edit Modal -->
+  <div class="admin-modal-backdrop" id="skill-modal" role="dialog" aria-modal="true" aria-labelledby="skill-modal-title">
+    <div class="admin-modal-card" style="max-width: 500px;">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title" id="skill-modal-title">Add New Skill</h3>
+        <button type="button" class="admin-modal-close" data-close-modal="skill-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="skill-modal-form" novalidate>
+        <div class="admin-modal-body">
+          <!-- Skill Name -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="skill-name-input">
+              <span>Skill Name <span class="required-star">*</span></span>
+            </label>
+            <input type="text" id="skill-name-input" class="modal-input" placeholder="e.g. JavaScript, CSS3, Docker" required>
+            <span class="modal-field-error" id="skill-name-input-error"></span>
+          </div>
+
+          <!-- Category -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="skill-category-input">
+              <span>Category <span class="required-star">*</span></span>
+            </label>
+            <input type="text" id="skill-category-input" class="modal-input" placeholder="e.g. Frontend, Backend, Programming, DevOps" required>
+            <span class="modal-field-error" id="skill-category-input-error"></span>
+          </div>
+
+          <!-- Skill Level Slider (Section 16) -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="skill-level-input">
+              <span>Proficiency Level (0–100%)</span>
+              <span class="range-display" id="skill-level-display">80%</span>
+            </label>
+            <div class="range-container">
+              <input type="range" id="skill-level-input" class="modal-range" min="0" max="100" value="80">
+            </div>
+            <span class="modal-field-error" id="skill-level-input-error"></span>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" data-close-modal="skill-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btn-save-skill">Save Skill</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Blog Add / Edit Modal -->
+  <div class="admin-modal-backdrop" id="blog-modal" role="dialog" aria-modal="true" aria-labelledby="blog-modal-title">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title" id="blog-modal-title">Add New Blog Article</h3>
+        <button type="button" class="admin-modal-close" data-close-modal="blog-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="blog-modal-form" novalidate>
+        <div class="admin-modal-body">
+          <!-- Blog Title -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="blog-title-input">
+              <span>Article Title <span class="required-star">*</span></span>
+            </label>
+            <input type="text" id="blog-title-input" class="modal-input" placeholder="e.g. Architecting Scalable Single Page Applications" required>
+            <span class="modal-field-error" id="blog-title-input-error"></span>
+          </div>
+
+          <!-- Excerpt -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="blog-excerpt-input">
+              <span>Short Excerpt <span class="required-star">*</span></span>
+            </label>
+            <input type="text" id="blog-excerpt-input" class="modal-input" placeholder="One sentence summary of the article..." required>
+            <span class="modal-field-error" id="blog-excerpt-input-error"></span>
+          </div>
+
+          <!-- Content Textarea -->
+          <div class="modal-form-group">
+            <label class="modal-label" for="blog-content-input">
+              <span>Article Content <span class="required-star">*</span></span>
+            </label>
+            <textarea id="blog-content-input" class="modal-textarea" style="min-height: 140px;" placeholder="Full article body content..." required></textarea>
+            <span class="modal-field-error" id="blog-content-input-error"></span>
+          </div>
+
+          <!-- Category & Image URL -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-3);">
+            <div class="modal-form-group">
+              <label class="modal-label" for="blog-category-input">
+                <span>Category <span class="required-star">*</span></span>
+              </label>
+              <input type="text" id="blog-category-input" class="modal-input" placeholder="e.g. JavaScript, Architecture, Web" required>
+              <span class="modal-field-error" id="blog-category-input-error"></span>
+            </div>
+            <div class="modal-form-group">
+              <label class="modal-label" for="blog-image-input">
+                <span>Image Path / URL</span>
+              </label>
+              <input type="text" id="blog-image-input" class="modal-input" placeholder="assets/images/blog-placeholder.jpg">
+            </div>
+          </div>
+
+          <!-- Published Checkbox -->
+          <div class="modal-form-group">
+            <label class="modal-checkbox-group" for="blog-published-input">
+              <input type="checkbox" id="blog-published-input" checked>
+              <span>Publish article immediately (Uncheck to save as draft)</span>
+            </label>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" data-close-modal="blog-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btn-save-blog">Save Article</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Universal Confirmation Delete Modal (Section 13, 20, 27) -->
+  <div class="admin-modal-backdrop" id="confirm-delete-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-delete-title">
+    <div class="admin-modal-card" style="max-width: 440px;">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title" id="confirm-delete-title">Confirm Deletion</h3>
+        <button type="button" class="admin-modal-close" data-close-modal="confirm-delete-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="modal-delete-warning">
+          <div class="delete-warning-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          </div>
+          <div class="delete-warning-text">
+            <h4>Delete Confirmation</h4>
+            <p id="confirm-delete-message">Are you sure you want to delete this item? This action will permanently remove it from Local Storage.</p>
+          </div>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" data-close-modal="confirm-delete-modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-delete-action" style="background: var(--accent-rose); border-color: var(--accent-rose);">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container (Section 34) -->
+  <div class="admin-toast-container" id="admin-toast-container" aria-live="polite"></div>
+
+  <!-- JavaScript Modules -->
+  <script src="../js/admin.js"></script>
 </body>
 </html>

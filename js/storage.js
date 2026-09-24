@@ -21,7 +21,8 @@ window.PortfolioStorage = (function() {
   const STORAGE_KEYS = {
     THEME: "portfolio_theme_mode",      // UI Theme Preference (dark/light)
     USERS: "portfolio_users",           // Registered users collection
-    SESSION: "portfolio_session",       // Active session (user profile & role)
+    CURRENT_USER: "portfolio_current_user", // Active logged-in user session
+    SESSION: "portfolio_current_user",  // Alias for backward compatibility
     PROJECTS: "portfolio_projects",     // Projects collection (Admin CRUD)
     SKILLS: "portfolio_skills",         // Technical skills collection (Admin CRUD)
     BLOGS: "portfolio_blogs",           // Blog articles collection (Admin CRUD)
@@ -349,6 +350,327 @@ window.PortfolioStorage = (function() {
   }
 
   /* --------------------------------------------------------------------------
+     8. User & Session Storage API (Module 2 Authentication Foundation)
+     
+     SECURITY DEMONSTRATION NOTE:
+     "This Local Storage authentication is implemented for educational/demo
+     purposes only. Production applications must use secure server-side
+     authentication and must never store plaintext passwords in browser Local Storage."
+     -------------------------------------------------------------------------- */
+
+  /**
+   * Retrieve all registered users array from localStorage (portfolio_users)
+   * @returns {Array<Object>}
+   */
+  function getUsers() {
+    return getCollection(STORAGE_KEYS.USERS);
+  }
+
+  /**
+   * Persist entire registered users array to localStorage (portfolio_users)
+   * @param {Array<Object>} users 
+   * @returns {boolean}
+   */
+  function saveUsers(users) {
+    return saveCollection(STORAGE_KEYS.USERS, users);
+  }
+
+  /**
+   * Find an existing user by email (case-insensitive)
+   * @param {string} email 
+   * @returns {Object|null}
+   */
+  function findUserByEmail(email) {
+    if (!email) return null;
+    const normalized = String(email).trim().toLowerCase();
+    const users = getUsers();
+    return users.find(u => u && u.email && u.email.toLowerCase() === normalized) || null;
+  }
+
+  /**
+   * Add a new user to portfolio_users without overwriting existing users
+   * Always reads existing users, parses array, appends user, and saves.
+   * @param {Object} user 
+   * @returns {Object|null} The stored user object or null if failed
+   */
+  function addUser(user) {
+    if (!user || typeof user !== "object") return null;
+    const users = getUsers();
+    users.push(user);
+    const success = saveUsers(users);
+    return success ? user : null;
+  }
+
+  /**
+   * Get current authenticated user profile
+   * @returns {Object|null}
+   */
+  function getCurrentUser() {
+    const raw = getJSON(STORAGE_KEYS.CURRENT_USER, null);
+    if (!raw) return null;
+    return raw.user ? raw.user : raw;
+  }
+
+  /**
+   * Set current authenticated session user (Module 3 Login)
+   * Stored under 'portfolio_current_user'.
+   * Never stores the password.
+   * @param {Object} user 
+   * @returns {boolean}
+   */
+  function setCurrentUser(user) {
+    if (!user) return false;
+    const sessionUser = {
+      id: user.id,
+      fullName: user.fullName || user.name || "",
+      email: user.email,
+      role: user.role || "user",
+      loginTime: new Date().toISOString()
+    };
+    return setJSON(STORAGE_KEYS.CURRENT_USER, sessionUser);
+  }
+
+  /**
+   * Clear current user session
+   * @returns {boolean}
+   */
+  function clearCurrentUser() {
+    return removeItem(STORAGE_KEYS.CURRENT_USER);
+  }
+
+  /**
+   * Check if a user is currently logged in
+   * @returns {boolean}
+   */
+  function isUserLoggedIn() {
+    return getCurrentUser() !== null;
+  }
+
+  /**
+   * Logout current user
+   * @returns {boolean}
+   */
+  function logoutUser() {
+    return clearCurrentUser();
+  }
+
+  /* --------------------------------------------------------------------------
+     9. Projects Storage API (Module 4)
+     Local Storage Key: portfolio_projects
+     -------------------------------------------------------------------------- */
+  function getProjects() {
+    return getCollection(STORAGE_KEYS.PROJECTS);
+  }
+
+  function saveProjects(projects) {
+    return saveCollection(STORAGE_KEYS.PROJECTS, projects);
+  }
+
+  function addProject(project) {
+    if (!project || typeof project !== "object") return null;
+    const item = Object.assign({}, project);
+    if (!item.id) {
+      item.id = "proj_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 7);
+    }
+    if (!item.createdAt) {
+      item.createdAt = new Date().toISOString();
+    }
+    if (!Array.isArray(item.technologies)) {
+      item.technologies = typeof item.technologies === "string"
+        ? item.technologies.split(",").map(t => t.trim()).filter(Boolean)
+        : [];
+    }
+    const projects = getProjects();
+    projects.unshift(item); // Add newest first
+    const success = saveProjects(projects);
+    return success ? item : null;
+  }
+
+  function updateProject(id, updatedData) {
+    if (!id || !updatedData) return false;
+    const dataToUpdate = Object.assign({}, updatedData);
+    if (dataToUpdate.technologies && !Array.isArray(dataToUpdate.technologies)) {
+      dataToUpdate.technologies = typeof dataToUpdate.technologies === "string"
+        ? dataToUpdate.technologies.split(",").map(t => t.trim()).filter(Boolean)
+        : [];
+    }
+    return updateInCollection(STORAGE_KEYS.PROJECTS, id, dataToUpdate);
+  }
+
+  function deleteProject(id) {
+    return removeFromCollection(STORAGE_KEYS.PROJECTS, id);
+  }
+
+  /* --------------------------------------------------------------------------
+     10. Skills Storage API (Module 4)
+     Local Storage Key: portfolio_skills
+     -------------------------------------------------------------------------- */
+  function getSkills() {
+    return getCollection(STORAGE_KEYS.SKILLS);
+  }
+
+  function saveSkills(skills) {
+    return saveCollection(STORAGE_KEYS.SKILLS, skills);
+  }
+
+  function addSkill(skill) {
+    if (!skill || typeof skill !== "object") return null;
+    const item = Object.assign({}, skill);
+    if (!item.id) {
+      item.id = "skill_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 7);
+    }
+    if (!item.createdAt) {
+      item.createdAt = new Date().toISOString();
+    }
+    item.level = Math.min(100, Math.max(0, parseInt(item.level, 10) || 0));
+    const skills = getSkills();
+    skills.push(item);
+    const success = saveSkills(skills);
+    return success ? item : null;
+  }
+
+  function updateSkill(id, updatedData) {
+    if (!id || !updatedData) return false;
+    const dataToUpdate = Object.assign({}, updatedData);
+    if (dataToUpdate.level !== undefined) {
+      dataToUpdate.level = Math.min(100, Math.max(0, parseInt(dataToUpdate.level, 10) || 0));
+    }
+    return updateInCollection(STORAGE_KEYS.SKILLS, id, dataToUpdate);
+  }
+
+  function deleteSkill(id) {
+    return removeFromCollection(STORAGE_KEYS.SKILLS, id);
+  }
+
+  /* --------------------------------------------------------------------------
+     11. Blogs Storage API (Module 4)
+     Local Storage Key: portfolio_blogs
+     -------------------------------------------------------------------------- */
+  function getBlogs() {
+    return getCollection(STORAGE_KEYS.BLOGS);
+  }
+
+  function saveBlogs(blogs) {
+    return saveCollection(STORAGE_KEYS.BLOGS, blogs);
+  }
+
+  function addBlog(blog) {
+    if (!blog || typeof blog !== "object") return null;
+    const item = Object.assign({}, blog);
+    if (!item.id) {
+      item.id = "blog_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 7);
+    }
+    if (!item.createdAt) {
+      item.createdAt = new Date().toISOString();
+    }
+    if (item.published === undefined) {
+      item.published = true;
+    }
+    const blogs = getBlogs();
+    blogs.unshift(item); // Add newest first
+    const success = saveBlogs(blogs);
+    return success ? item : null;
+  }
+
+  function updateBlog(id, updatedData) {
+    return updateInCollection(STORAGE_KEYS.BLOGS, id, updatedData);
+  }
+
+  function deleteBlog(id) {
+    return removeFromCollection(STORAGE_KEYS.BLOGS, id);
+  }
+
+  /* --------------------------------------------------------------------------
+     12. Controlled Sample Data Seeding (Section 39)
+     Seeds sample projects, skills, and blogs ONLY IF their respective
+     Local Storage arrays are completely empty. Never overwrites Admin data.
+     -------------------------------------------------------------------------- */
+  function seedInitialData() {
+    if (!isAvailable()) return;
+
+    // 1. Seed sample projects if empty (3 items)
+    if (getProjects().length === 0) {
+      const sampleProjects = [
+        {
+          id: "proj_demo_01",
+          title: "Personal Portfolio Platform",
+          description: "A responsive, accessible developer portfolio website built natively with HTML5, CSS3, and Vanilla JavaScript, featuring modular client-side state management.",
+          technologies: ["HTML5", "CSS3", "JavaScript", "Local Storage", "WCAG 2.1"],
+          image: "assets/images/project-placeholder.jpg",
+          projectUrl: "https://example.com/portfolio-demo",
+          githubUrl: "https://github.com/venkatapavan78/Portfolio",
+          createdAt: "2026-09-20T10:00:00.000Z"
+        },
+        {
+          id: "proj_demo_02",
+          title: "Cloud Telemetry & Metrics Console",
+          description: "High-performance enterprise monitoring interface displaying latency percentiles, system uptime graphs, and customizable threshold alert indicators.",
+          technologies: ["JavaScript", "CSS Grid", "SVG Graphs", "WebSockets"],
+          image: "assets/images/project-placeholder.jpg",
+          projectUrl: "https://example.com/cloud-metrics",
+          githubUrl: "https://github.com/example/cloud-metrics",
+          createdAt: "2026-09-22T14:30:00.000Z"
+        },
+        {
+          id: "proj_demo_03",
+          title: "Developer Documentation Hub",
+          description: "Technical reference catalog with instant client-side full-text search, keyboard accessibility navigation, and synchronized dark/light theming.",
+          technologies: ["HTML5", "CSS3", "Vanilla JS", "Accessibility"],
+          image: "assets/images/project-placeholder.jpg",
+          projectUrl: "https://example.com/docs-hub",
+          githubUrl: "https://github.com/example/docs-hub",
+          createdAt: "2026-09-23T09:15:00.000Z"
+        }
+      ];
+      saveProjects(sampleProjects);
+      console.log("[PortfolioStorage] Sample projects initialized in Local Storage (portfolio_projects).");
+    }
+
+    // 2. Seed sample skills if empty (5 items)
+    if (getSkills().length === 0) {
+      const sampleSkills = [
+        { id: "skill_demo_01", name: "JavaScript (ES6+)", category: "Programming", level: 92, createdAt: "2026-09-18T08:00:00.000Z" },
+        { id: "skill_demo_02", name: "HTML5 Semantic Architecture", category: "Frontend", level: 95, createdAt: "2026-09-18T08:05:00.000Z" },
+        { id: "skill_demo_03", name: "Modern CSS3 & Flexbox/Grid", category: "Frontend", level: 90, createdAt: "2026-09-18T08:10:00.000Z" },
+        { id: "skill_demo_04", name: "Client State & Local Storage", category: "Architecture", level: 88, createdAt: "2026-09-18T08:15:00.000Z" },
+        { id: "skill_demo_05", name: "Web Accessibility (WAI-ARIA)", category: "Engineering", level: 85, createdAt: "2026-09-18T08:20:00.000Z" }
+      ];
+      saveSkills(sampleSkills);
+      console.log("[PortfolioStorage] Sample skills initialized in Local Storage (portfolio_skills).");
+    }
+
+    // 3. Seed sample blogs if empty (2 items)
+    if (getBlogs().length === 0) {
+      const sampleBlogs = [
+        {
+          id: "blog_demo_01",
+          title: "Mastering Vanilla JavaScript Without Frameworks",
+          excerpt: "How modern JavaScript primitives, DOM APIs, and CSS custom properties allow building lightning-fast web applications.",
+          content: "In modern web development, frameworks often overshadow the raw capabilities of standard JavaScript. By mastering DOM event delegation, custom events, and persistent client state, software engineers can build maintainable and ultra-lightweight systems with zero compilation overhead.",
+          category: "JavaScript",
+          author: "Administrator",
+          image: "assets/images/blog-placeholder.jpg",
+          published: true,
+          createdAt: "2026-09-21T11:00:00.000Z"
+        },
+        {
+          id: "blog_demo_02",
+          title: "Architecting Accessible Web Applications",
+          excerpt: "A practical guide to implementing WAI-ARIA landmarks, keyboard trapping, and contrast compliance.",
+          content: "Accessibility is not an afterthought—it is foundational software engineering. This article explores semantic HTML hierarchies, focus management in modal dialogs, and non-color-reliant visual feedback that ensure our web platforms welcome all users.",
+          category: "Accessibility",
+          author: "Administrator",
+          image: "assets/images/blog-placeholder.jpg",
+          published: true,
+          createdAt: "2026-09-22T16:45:00.000Z"
+        }
+      ];
+      saveBlogs(sampleBlogs);
+      console.log("[PortfolioStorage] Sample blogs initialized in Local Storage (portfolio_blogs).");
+    }
+  }
+
+  /* --------------------------------------------------------------------------
      Public Interface
      -------------------------------------------------------------------------- */
   return {
@@ -371,6 +693,41 @@ window.PortfolioStorage = (function() {
     countCollection: countCollection,
     getTheme: getTheme,
     setTheme: setTheme,
-    toggleTheme: toggleTheme
+    toggleTheme: toggleTheme,
+    // User & Session Storage API
+    getUsers: getUsers,
+    saveUsers: saveUsers,
+    findUserByEmail: findUserByEmail,
+    addUser: addUser,
+    getCurrentUser: getCurrentUser,
+    setCurrentUser: setCurrentUser,
+    clearCurrentUser: clearCurrentUser,
+    isUserLoggedIn: isUserLoggedIn,
+    logoutUser: logoutUser,
+    // Module 4: Projects CRUD API
+    getProjects: getProjects,
+    saveProjects: saveProjects,
+    addProject: addProject,
+    updateProject: updateProject,
+    deleteProject: deleteProject,
+    // Module 4: Skills CRUD API
+    getSkills: getSkills,
+    saveSkills: saveSkills,
+    addSkill: addSkill,
+    updateSkill: updateSkill,
+    deleteSkill: deleteSkill,
+    // Module 4: Blogs CRUD API
+    getBlogs: getBlogs,
+    saveBlogs: saveBlogs,
+    addBlog: addBlog,
+    updateBlog: updateBlog,
+    deleteBlog: deleteBlog,
+    // Module 4: Sample Data Seeding
+    seedInitialData: seedInitialData
   };
 })();
+
+// Automatically seed sample data if collections are empty (Section 39)
+if (window.PortfolioStorage && typeof window.PortfolioStorage.seedInitialData === "function") {
+  window.PortfolioStorage.seedInitialData();
+}

@@ -4,55 +4,160 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Venkata Pavan Portfolio</title>
-  
+  <meta name="description" content="Sign in to your Venkata Pavan developer portfolio account using Local Storage credentials.">
+
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2306b6d4'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>VP</text></svg>">
+
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <link rel="stylesheet" href="../css/auth.css">
 </head>
 <body>
+  <!-- Ambient Cursor Glow Effect -->
   <div class="ambient-glow" aria-hidden="true"></div>
+
+  <!-- Top Floating Controls -->
+  <div class="auth-top-controls">
+    <button type="button" class="theme-toggle" id="theme-toggle-btn" aria-label="Switch to light mode" title="Toggle theme">
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+    <a href="../index.html" class="btn btn-outline btn-sm">Home</a>
+  </div>
 
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
-        <a href="../index.html" class="brand auth-brand">
-          <span class="brand-monogram">VP</span>
+        <a href="../index.html" class="brand auth-brand" aria-label="Portfolio Homepage">
+          <span class="brand-monogram">P</span>
+          <span class="brand-text">
+            <span class="brand-name">Portfolio</span>
+            <span class="brand-title">Venkata Pavan</span>
+          </span>
         </a>
         <h1 class="auth-title">Welcome Back</h1>
-        <p class="auth-subtitle">Sign in to access your portfolio dashboard</p>
+        <p class="auth-subtitle">Login to access your portfolio account.</p>
       </div>
 
-      <div class="auth-notice-banner auth-notice-cyan">
-        <span class="auth-notice-text">
-          [Placeholder] Module: Authentication will be activated in the next phase.
-        </span>
-      </div>
+      <!-- Live Global Alert Box -->
+      <div id="auth-alert" class="auth-alert" role="alert" aria-live="polite"></div>
 
-      <form class="auth-form">
+      <!-- Login Form (Module 3 - Section 5) -->
+      <form class="auth-form" id="loginForm" novalidate>
+        <!-- Email Input -->
         <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
-          <input class="form-input" type="email" id="email" placeholder="name@example.com" disabled>
+          <label class="form-label" for="loginEmail">
+            <span>Email <span class="required-star">*</span></span>
+          </label>
+          <input
+            class="form-input"
+            type="email"
+            id="loginEmail"
+            name="email"
+            placeholder="name@example.com"
+            autocomplete="email"
+            required
+            aria-describedby="login-email-error"
+          >
+          <div class="form-field-error" id="login-email-error"></div>
         </div>
 
+        <!-- Password Input with Show/Hide Toggle -->
         <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input class="form-input" type="password" id="password" placeholder="••••••••" disabled>
+          <label class="form-label" for="loginPassword">
+            <span>Password <span class="required-star">*</span></span>
+          </label>
+          <div class="password-input-wrapper">
+            <input
+              class="form-input"
+              type="password"
+              id="loginPassword"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+              aria-describedby="login-password-error"
+            >
+            <button
+              type="button"
+              class="password-toggle-btn"
+              data-target="loginPassword"
+              aria-label="Show password"
+              title="Toggle password visibility"
+            >
+              <svg class="icon-eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="icon-eye-closed" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="form-field-error" id="login-password-error"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary auth-submit-btn" disabled>
-          Sign In (Coming Soon)
+        <!-- Remember Me Checkbox (Section 23) -->
+        <div class="form-group">
+          <label class="terms-checkbox-group" for="rememberMe">
+            <input type="checkbox" id="rememberMe" name="rememberMe" checked>
+            <span>Remember Me</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="login-submit-btn" class="btn btn-primary auth-submit-btn">
+          <span>Login</span>
         </button>
       </form>
 
+      <!-- Academic Demonstration Credentials Helper (Section 12, 13) -->
+      <div class="demo-creds-box">
+        <div class="demo-creds-title">
+          <span>Academic Demo Credentials</span>
+          <span class="badge badge-sm" style="font-size: 0.65rem; background: rgba(139, 92, 246, 0.2); color: var(--accent-secondary); padding: 1px 6px; border-radius: 4px;">Testing Only</span>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.35;">
+          Use the initialized Admin account or any registered User from Signup:
+        </p>
+        <div class="demo-creds-list">
+          <div class="demo-cred-row">
+            <div>
+              <strong>Admin:</strong> admin@portfolio.com &bull; Admin123
+            </div>
+            <button type="button" class="btn-demo-fill" id="btn-demo-admin" title="Fill admin credentials into form">
+              Auto-Fill
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links (Section 29) -->
       <div class="form-footer">
         <p>Don't have an account? <a href="signup.html" class="form-link">Sign Up</a></p>
         <p class="form-footer-action">
-          <a href="../index.html" class="form-link">← Return to Home</a>
+          <a href="../index.html" class="form-link">← Back to Home</a>
         </p>
       </div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="../js/storage.js"></script>
   <script src="../js/auth.js"></script>
 </body>

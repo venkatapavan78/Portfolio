@@ -4,15 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard | Venkata Pavan Portfolio</title>
-  
+  <meta name="description" content="User Workspace Hub for registered clients on Venkata Pavan portfolio. Protected by Local Storage session authentication.">
+
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2306b6d4'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>VP</text></svg>">
+
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <link rel="stylesheet" href="../css/auth.css">
+
+  <!-- Core Scripts for Immediate Authentication Guard -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Module 3 - Section 17, 19, 21: Immediate User Authentication Guard & Back Button Protection
+    // Redirects unauthenticated visitors to login.html
+    const currentUser = window.PortfolioAuth ? window.PortfolioAuth.requireAuthentication("login.html") : null;
+  </script>
 </head>
 <body>
   <div class="ambient-glow" aria-hidden="true"></div>
 
   <div class="dashboard-wrapper">
+    <!-- Header Navigation -->
     <header class="site-header scrolled">
       <div class="container navbar">
         <a href="../index.html" class="brand">
@@ -27,20 +42,45 @@
             <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
           </button>
-          <a href="../index.html" class="btn btn-outline btn-sm">Return Home</a>
+          <button type="button" id="header-logout-btn" class="btn btn-outline btn-sm btn-logout" data-redirect="../index.html">
+            Logout
+          </button>
         </div>
       </div>
     </header>
 
+    <!-- Main Workspace -->
     <main class="container dashboard-main">
       <div class="dashboard-card">
-        <span class="section-tag">// Role: USER Architecture</span>
-        <h1 class="section-title dashboard-title">User Workspace Hub</h1>
+        <!-- Live Alert Box for Role Guard Notice (Section 18) -->
+        <div id="auth-guard-notice" class="auth-alert" role="alert" aria-live="polite"></div>
+
+        <span class="section-tag">// Role: USER Session Active</span>
+        <h1 class="section-title dashboard-title">User Dashboard</h1>
         <p class="section-subtitle dashboard-desc">
-          Client portal workspace reserved for future modules. Registered users will manage collaboration inquiries, track project milestones, and access personalized client views.
+          Authentication successful. User dashboard functionality will be implemented in a future module.
         </p>
 
-        <!-- 3-Panel Architecture Matrix (Section 19: Future Workflow) -->
+        <!-- Active Logged-In User Profile Banner (Section 15) -->
+        <div class="dashboard-user-card" id="user-session-card">
+          <div class="dashboard-user-info">
+            <div class="dashboard-avatar" id="user-avatar">US</div>
+            <div class="dashboard-user-meta">
+              <div class="dashboard-user-name">
+                <span id="user-display-name">Client User</span>
+                <span class="auth-role-tag" id="user-display-role">ROLE: USER</span>
+              </div>
+              <div class="dashboard-user-email" id="user-display-email">user@example.com</div>
+            </div>
+          </div>
+          <div class="dashboard-actions">
+            <button type="button" id="logout-btn" class="btn btn-outline btn-sm btn-logout" data-redirect="../index.html">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- 3-Panel Architecture Matrix (Future Client Workspace Modules) -->
         <div class="dashboard-grid">
           <!-- 1. Profile Panel -->
           <div class="dashboard-panel-card">
@@ -49,10 +89,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 Client Profile
               </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+              <span class="dashboard-panel-badge badge-amber">Future Module</span>
             </div>
             <p class="dashboard-panel-desc">
-              Manage personal credentials, contact email, and session preferences stored in <code>portfolio_users</code> and <code>portfolio_session</code>.
+              Manage personal credentials, contact email, and active session preferences stored in <code>portfolio_current_user</code>.
             </p>
             <div class="dashboard-panel-meta">Role: USER</div>
           </div>
@@ -64,7 +104,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                 Saved Projects
               </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+              <span class="dashboard-panel-badge badge-amber">Future Module</span>
             </div>
             <p class="dashboard-panel-desc">
               Bookmark featured portfolio applications, view architectural specifications, and download case studies.
@@ -79,7 +119,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 My Inquiries
               </span>
-              <span class="dashboard-panel-badge badge-amber">Reserved Module</span>
+              <span class="dashboard-panel-badge badge-amber">Future Module</span>
             </div>
             <p class="dashboard-panel-desc">
               Track project inquiries submitted through the contact form, response status, and communications history.
@@ -88,12 +128,37 @@
           </div>
         </div>
 
-        <a href="../index.html" class="btn btn-primary">Return to Home Page</a>
+        <a href="../index.html" class="btn btn-outline">Return to Home Page</a>
       </div>
     </main>
   </div>
 
-  <script src="../js/storage.js"></script>
-  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Dynamic hydration of authenticated User info
+      if (window.PortfolioAuth) {
+        const user = window.PortfolioAuth.getCurrentUser();
+        if (user) {
+          const nameEl = document.getElementById("user-display-name");
+          const emailEl = document.getElementById("user-display-email");
+          const roleEl = document.getElementById("user-display-role");
+          const avatarEl = document.getElementById("user-avatar");
+
+          if (nameEl) nameEl.textContent = user.fullName || "User";
+          if (emailEl) emailEl.textContent = user.email || "";
+          if (roleEl) roleEl.textContent = "ROLE: " + (user.role || "user").toUpperCase();
+          if (avatarEl) {
+            const initials = (user.fullName || "US")
+              .split(" ")
+              .map(n => n[0])
+              .join("")
+              .substring(0, 2)
+              .toUpperCase();
+            avatarEl.textContent = initials || "US";
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
